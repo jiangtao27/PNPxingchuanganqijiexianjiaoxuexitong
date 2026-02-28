@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNP型传感器接线教学系统 - 五线制评分</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        
+        .header { 
+            background: rgba(0,0,0,0.3); 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            border-bottom: 3px solid #e94560;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; color: #ffd700; }
+        
+        .main-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        
+        .workspace { 
+            background: #f8f9fa; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); 
+            padding: 30px; 
+            width: 100%; 
+            position: relative; 
+            min-height: 500px;
+        }
+        
+        .devices-container { 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: flex-end; 
+            margin-bottom: 40px; 
+            position: relative; 
+            padding: 20px;
+        }
+        
+        .device { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            position: relative; 
+            border: 2px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .device:hover { 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+            transform: translateY(-5px);
+        }
+        
+        .sensor { 
+            width: 200px; 
+            background: linear-gradient(145deg, #2c3e50, #34495e); 
+            color: white; 
+            border-color: #34495e;
+        }
+        .sensor-body { 
+            width: 80px; 
+            height: 100px; 
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d); 
+            margin: 0 auto; 
+            border-radius: 10px; 
+            position: relative; 
+        }
+        .sensor-head { 
+            width: 50px; 
+            height: 50px; 
+            background: radial-gradient(circle, #e74c3c, #c0392b); 
+            border-radius: 50%; 
+            margin: 0 auto 10px; 
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+            position: relative;
+            transition: all 0.3s;
+        }
+        .sensor-head.active {
+            background: radial-gradient(circle, #2ecc71, #27ae60);
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
+        }
+        .sensor-head::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px; height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+        .sensor-title { text-align: center; font-weight: bold; margin-bottom: 15px; font-size: 16px; }
+        
+        .plc { 
+            width: 280px; 
+            background: #2c3e50; 
+            color: white; 
+            border-color: #34495e;
+        }
+        .plc-header { 
+            text-align: center; 
+            font-weight: bold; 
+            margin-bottom: 15px; 
+            color: #3498db; 
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+        }
+        .plc-section { margin-bottom: 15px; }
+        .plc-section-title { font-size: 12px; color: #7f8c8d; margin-bottom: 8px; text-align: center; }
+        
+        .power { 
+            width: 220px; 
+            background: #27ae60; 
+            color: white; 
+            border-color: #229954;
+        }
+        .power-title { text-align: center; font-weight: bold; margin-bottom: 15px; font-size: 18px; }
+        .power-led { 
+            width: 20px; height: 20px; 
+            background: #333; 
+            border-radius: 50%; 
+            margin: 0 auto 10px; 
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+        .power-led.on { 
+            background: #2ecc71; 
+            box-shadow: 0 0 20px #2ecc71;
+        }
+        
+        .terminals { margin-top: 15px; }
+        .terminal-row { 
+            display: flex; 
+            align-items: center; 
+            margin: 10px 0; 
+            font-size: 13px; 
+            position: relative;
+        }
+        .terminal { 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            margin-right: 10px; 
+            cursor: pointer; 
+            position: relative; 
+            border: 3px solid rgba(0,0,0,0.2); 
+            transition: all 0.3s; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .terminal:hover { transform: scale(1.2); box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .terminal.selected { 
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.5);
+            transform: scale(1.1);
+        }
+        .terminal.brown { background: #8B4513; }
+        .terminal.blue { background: #0000FF; }
+        .terminal.black { background: #1a1a1a; }
+        .terminal.red { background: #DC143C; }
+        .terminal.gray { background: #7f8c8d; }
+        
+        .terminal-label { flex: 1; font-weight: 500; }
+        .terminal-status { 
+            width: 10px; height: 10px; 
+            border-radius: 50%; 
+            background: #95a5a6; 
+            margin-left: 5px;
+            transition: all 0.3s;
+        }
+        .terminal-status.correct { background: #2ecc71; box-shadow: 0 0 5px #2ecc71; }
+        .terminal-status.wrong { background: #e74c3c; box-shadow: 0 0 5px #e74c3c; }
+        
+        #wire-layer { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            pointer-events: none; 
+            z-index: 1;
+        }
+        .wire { 
+            stroke-width: 4; 
+            fill: none; 
+            stroke-linecap: round; 
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+            opacity: 0.8;
+            cursor: pointer;
+            pointer-events: stroke;
+        }
+        .wire:hover { stroke-width: 6; opacity: 1; }
+        .wire.brown { stroke: #8B4513; }
+        .wire.blue { stroke: #0000FF; }
+        .wire.black { stroke: #1a1a1a; }
+        .wire.red { stroke: #DC143C; }
+        .wire.gray { stroke: #7f8c8d; }
+        .wire.dragging { opacity: 0.4; stroke-dasharray: 5,5; pointer-events: none; }
+        
+        .control-panel { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-top: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            position: relative;
+            z-index: 10;
+        }
+        
+        .score-display { font-size: 20px; font-weight: bold; color: #2c3e50; }
+        .score-value { 
+            font-size: 48px; 
+            color: #e74c3c; 
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .score-value.perfect { color: #27ae60; }
+        .score-value.pass { color: #f39c12; }
+        .score-value.fail { color: #e74c3c; }
+        
+        .btn { 
+            padding: 12px 30px; 
+            border: none; 
+            border-radius: 25px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            font-weight: bold;
+        }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; transform: translateY(-2px); }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #229954; }
+        
+        /* 五根线状态显示 - 已隐藏 */
+        .wires-checklist {
+            display: none; /* 隐藏检查清单 */
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+        .wire-check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 20px;
+            font-size: 13px;
+            border: 2px solid #ddd;
+            transition: all 0.3s;
+            min-width: 180px;
+        }
+        .wire-check-item.correct {
+            border-color: #27ae60;
+            background: #d4edda;
+            color: #155724;
+        }
+        .wire-check-item.wrong {
+            border-color: #e74c3c;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .wire-check-item.pending {
+            border-color: #ffc107;
+            background: #fff3cd;
+            color: #856404;
+        }
+        .wire-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .wire-status-icon {
+            margin-left: auto;
+            font-weight: bold;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header { text-align: center; margin-bottom: 25px; }
+        .modal-score { font-size: 56px; font-weight: bold; margin: 20px 0; }
+        .modal-feedback { font-size: 18px; margin-bottom: 20px; line-height: 1.6; }
+        
+        .wires-detail { margin: 20px 0; }
+        .detail-item {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        .detail-item.correct { background: #d4edda; border-left: 4px solid #28a745; }
+        .detail-item.wrong { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .detail-item.missing { background: #fff3cd; border-left: 4px solid #ffc107; }
+        .detail-score { font-weight: bold; font-size: 16px; }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #000; }
+        
+        .hint-box {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            display: none;
+            z-index: 100;
+            white-space: nowrap;
+        }
+        .hint-box.show { display: block; animation: bounceIn 0.3s; }
+        @keyframes bounceIn { 
+            from { transform: translateX(-50%) scale(0.8); opacity: 0; } 
+            to { transform: translateX(-50%) scale(1); opacity: 1; } 
+        }
+        
+        @media (max-width: 1024px) {
+            .devices-container { flex-direction: column; align-items: center; gap: 30px; }
+            .device { width: 90% !important; max-width: 300px; }
+            .wires-checklist { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔌 PNP型传感器接线教学系统</h1>
+        <p>严格按五线制评分：五根线，错一根扣20分 | 参照图1原理图完成接线</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="workspace" id="workspace">
+            <svg id="wire-layer"></svg>
+            <div class="hint-box" id="hint-box"></div>
+            
+            <div class="devices-container">
+                <div class="device sensor" id="sensor">
+                    <div class="sensor-title">PNP型接近传感器</div>
+                    <div class="sensor-head" id="sensor-led"></div>
+                    <div class="sensor-body"></div>
+                    <div style="text-align: center; margin-top: 10px; font-size: 12px; opacity: 0.8;">三线制 DC24V</div>
+                    
+                    <div class="terminals">
+                        <div class="terminal-row">
+                            <div class="terminal brown" data-device="sensor" data-terminal="brown" data-color="brown" title="棕色线 - 电源正极(+24V)"></div>
+                            <span class="terminal-label">棕色 (BN) +24V</span>
+                            <div class="terminal-status" id="status-sensor-brown"></div>
+                        </div>
+                        <div class="terminal-row">
+                            <div class="terminal blue" data-device="sensor" data-terminal="blue" data-color="blue" title="蓝色线 - 电源负极(0V)"></div>
+                            <span class="terminal-label">蓝色 (BU) 0V</span>
+                            <div class="terminal-status" id="status-sensor-blue"></div>
+                        </div>
+                        <div class="terminal-row">
+                            <div class="terminal black" data-device="sensor" data-terminal="black" data-color="black" title="黑色线 - 信号输出"></div>
+                            <span class="terminal-label">黑色 (BK) OUT</span>
+                            <div class="terminal-status" id="status-sensor-black"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="device plc" id="plc">
+                    <div class="plc-header">三菱 FX3U PLC</div>
+                    
+                    <div class="plc-section">
+                        <div class="plc-section-title">输入端子 (源型PNP接法)</div>
+                        <div class="terminals">
+                            <div class="terminal-row">
+                                <div class="terminal black" data-device="plc" data-terminal="x0" data-color="black" title="X0 - 传感器信号输入"></div>
+                                <span class="terminal-label">X0 (信号输入)</span>
+                                <div class="terminal-status" id="status-plc-x0"></div>
+                            </div>
+                            <div class="terminal-row">
+                                <div class="terminal gray" data-device="plc" data-terminal="ss" data-color="gray" title="S/S - 公共端 (PNP接0V)"></div>
+                                <span class="terminal-label">S/S (公共端)</span>
+                                <div class="terminal-status" id="status-plc-ss"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="plc-section">
+                        <div class="plc-section-title">电源端子 (AC220V)</div>
+                        <div class="terminals">
+                            <div class="terminal-row">
+                                <div class="terminal red" data-device="plc" data-terminal="l" data-color="red" title="L - 交流电源火线"></div>
+                                <span class="terminal-label">L (火线)</span>
+                                <div class="terminal-status" id="status-plc-l"></div>
+                            </div>
+                            <div class="terminal-row">
+                                <div class="terminal blue" data-device="plc" data-terminal="n" data-color="blue" title="N - 交流电源零线"></div>
+                                <span class="terminal-label">N (零线)</span>
+                                <div class="terminal-status" id="status-plc-n"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="device power" id="power">
+                    <div class="power-title">DC24V 开关电源</div>
+                    <div class="power-led" id="power-led"></div>
+                    <div style="text-align: center; font-size: 12px; margin-bottom: 15px;">DR-120-24</div>
+                    
+                    <div class="terminals">
+                        <div class="terminal-row">
+                            <div class="terminal red" data-device="power" data-terminal="l" data-color="red" title="L - 交流输入火线"></div>
+                            <span class="terminal-label">L (AC输入)</span>
+                            <div class="terminal-status" id="status-power-l"></div>
+                        </div>
+                        <div class="terminal-row">
+                            <div class="terminal blue" data-device="power" data-terminal="n" data-color="blue" title="N - 交流输入零线"></div>
+                            <span class="terminal-label">N (AC输入)</span>
+                            <div class="terminal-status" id="status-power-n"></div>
+                        </div>
+                        <div style="height: 10px;"></div>
+                        <div class="terminal-row">
+                            <div class="terminal brown" data-device="power" data-terminal="plus" data-color="brown" title="+V - 直流正极输出"></div>
+                            <span class="terminal-label">+V (DC24V)</span>
+                            <div class="terminal-status" id="status-power-plus"></div>
+                        </div>
+                        <div class="terminal-row">
+                            <div class="terminal blue" data-device="power" data-terminal="minus" data-color="blue" title="-V - 直流负极输出"></div>
+                            <span class="terminal-label">-V (DC0V)</span>
+                            <div class="terminal-status" id="status-power-minus"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 五根线检查清单 - 已隐藏 -->
+            <div class="wires-checklist" id="checklist">
+                <div class="wire-check-item pending" id="check-1" data-base="传感器棕线→电源+V">
+                    <div class="wire-dot" style="background: #8B4513;"></div>
+                    <span>传感器棕线→电源+V</span>
+                    <span class="wire-status-icon"></span>
+                </div>
+                <div class="wire-check-item pending" id="check-2" data-base="传感器蓝线→电源-V">
+                    <div class="wire-dot" style="background: #0000FF;"></div>
+                    <span>传感器蓝线→电源-V</span>
+                    <span class="wire-status-icon"></span>
+                </div>
+                <div class="wire-check-item pending" id="check-3" data-base="传感器黑线→PLC-X0">
+                    <div class="wire-dot" style="background: #1a1a1a;"></div>
+                    <span>传感器黑线→PLC-X0</span>
+                    <span class="wire-status-icon"></span>
+                </div>
+                <div class="wire-check-item pending" id="check-4" data-base="PLC-S/S→电源-V">
+                    <div class="wire-dot" style="background: #7f8c8d;"></div>
+                    <span>PLC-S/S→电源-V</span>
+                    <span class="wire-status-icon"></span>
+                </div>
+                <div class="wire-check-item pending" id="check-5" data-base="电源供电(AC220V)">
+                    <div class="wire-dot" style="background: #DC143C;"></div>
+                    <span>电源供电(AC220V)</span>
+                    <span class="wire-status-icon"></span>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <div class="score-display">
+                    当前得分: <span class="score-value" id="score">100</span> 分
+                    <div style="font-size: 12px; color: #666; margin-top: 5px; font-weight: normal;">五根线，错一根扣20分</div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="checkWiring()">🔍 检查接线评分</button>
+                    <button class="btn btn-danger" onclick="resetWiring()">🔄 重置接线</button>
+                    <button class="btn btn-success" onclick="showCorrect()">📖 查看标准接法</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h2>🎯 接线评分结果</h2>
+                <div class="modal-score" id="modal-score">100分</div>
+                <div class="modal-feedback" id="modal-feedback">完美！所有接线均正确。</div>
+            </div>
+            
+            <div class="wires-detail" id="wires-detail"></div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 13px; line-height: 1.6; color: #666;">
+                <strong>评分规则说明：</strong><br>
+                本系统严格按照"五根线，错一根扣20分"的标准评分。五根线分别为：<br>
+                1. 传感器棕色线(+24V) → 电源+V<br>
+                2. 传感器蓝色线(0V) → 电源-V<br>
+                3. 传感器黑色线(信号) → PLC-X0<br>
+                4. PLC-S/S公共端 → 电源-V (源型接法关键)<br>
+                5. AC220V供电：电源L→PLC L，电源N→PLC N (必须同时接好)
+            </div>
+            
+            <button class="btn btn-primary" onclick="closeModal()" style="width: 100%; margin-top: 20px;">确定</button>
+        </div>
+    </div>
+
+    <script>
+        let connections = [];
+        let isDragging = false;
+        let dragStart = null;
+        let currentWire = null;
+        
+        const standardWires = [
+            {
+                id: 1,
+                name: '传感器电源正极 (+24V)',
+                color: 'brown',
+                required: [
+                    { from: { device: 'sensor', terminal: 'brown' }, to: { device: 'power', terminal: 'plus' } }
+                ],
+                description: '棕色线：传感器+24V → 电源+V'
+            },
+            {
+                id: 2,
+                name: '传感器电源负极 (0V)',
+                color: 'blue',
+                required: [
+                    { from: { device: 'sensor', terminal: 'blue' }, to: { device: 'power', terminal: 'minus' } }
+                ],
+                description: '蓝色线：传感器0V → 电源-V'
+            },
+            {
+                id: 3,
+                name: '传感器信号输出',
+                color: 'black',
+                required: [
+                    { from: { device: 'sensor', terminal: 'black' }, to: { device: 'plc', terminal: 'x0' } }
+                ],
+                description: '黑色线：传感器OUT → PLC-X0'
+            },
+            {
+                id: 4,
+                name: 'PLC公共端 (源型)',
+                color: 'gray',
+                required: [
+                    { from: { device: 'plc', terminal: 'ss' }, to: { device: 'power', terminal: 'minus' } }
+                ],
+                description: 'S/S端：PLC公共端 → 电源-V (PNP源型接法)'
+            },
+            {
+                id: 5,
+                name: '电源AC220V供电',
+                color: 'red',
+                required: [
+                    { from: { device: 'power', terminal: 'l' }, to: { device: 'plc', terminal: 'l' } },
+                    { from: { device: 'power', terminal: 'n' }, to: { device: 'plc', terminal: 'n' } }
+                ],
+                description: '电源L→PLC L，电源N→PLC N (火线+零线)'
+            }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setupSVG();
+            setupTerminals();
+            updateChecklist();
+            calculateScore();
+        });
+        
+        function setupSVG() {
+            const svg = document.getElementById('wire-layer');
+            const workspace = document.getElementById('workspace');
+            svg.setAttribute('width', workspace.offsetWidth);
+            svg.setAttribute('height', workspace.offsetHeight);
+            
+            window.addEventListener('resize', () => {
+                svg.setAttribute('width', workspace.offsetWidth);
+                svg.setAttribute('height', workspace.offsetHeight);
+                redrawAllWires();
+            });
+        }
+        
+        function setupTerminals() {
+            const terminals = document.querySelectorAll('.terminal');
+            terminals.forEach(term => {
+                term.addEventListener('click', handleTerminalClick);
+                term.addEventListener('mousedown', handleTerminalMouseDown);
+            });
+            
+            document.addEventListener('mousemove', handleGlobalMouseMove);
+            document.addEventListener('mouseup', handleGlobalMouseUp);
+            
+            document.addEventListener('click', (e) => {
+                if (isDragging && !e.target.classList.contains('terminal')) {
+                    cancelDragging();
+                }
+            });
+        }
+        
+        function handleTerminalClick(e) {
+            if (e.detail === 0) return;
+            
+            const term = e.target;
+            
+            if (!isDragging) {
+                isDragging = true;
+                dragStart = term;
+                term.classList.add('selected');
+                
+                const rect = term.getBoundingClientRect();
+                const workspace = document.getElementById('workspace');
+                const wsRect = workspace.getBoundingClientRect();
+                
+                const x = rect.left + rect.width/2 - wsRect.left;
+                const y = rect.top + rect.height/2 - wsRect.top;
+                
+                createDraggingWire(x, y, x, y, term.dataset.color);
+                showHint(`从 ${getTerminalName(term)} 开始，点击或拖动到目标端子`);
+            } else {
+                if (term !== dragStart) {
+                    completeConnection(dragStart, term);
+                } else {
+                    showHint('不能连接到同一端子！');
+                }
+                cancelDragging();
+            }
+        }
+        
+        function handleTerminalMouseDown(e) {
+            if (e.button !== 0) return;
+            
+            const term = e.target;
+            e.preventDefault();
+            
+            isDragging = true;
+            dragStart = term;
+            term.classList.add('selected');
+            
+            const rect = term.getBoundingClientRect();
+            const workspace = document.getElementById('workspace');
+            const wsRect = workspace.getBoundingClientRect();
+            
+            const x = rect.left + rect.width/2 - wsRect.left;
+            const y = rect.top + rect.height/2 - wsRect.top;
+            
+            createDraggingWire(x, y, x, y, term.dataset.color);
+            showHint(`拖动到目标端子完成连线`);
+        }
+        
+        function handleGlobalMouseMove(e) {
+            if (!isDragging || !currentWire) return;
+            
+            const workspace = document.getElementById('workspace');
+            const wsRect = workspace.getBoundingClientRect();
+            
+            const x2 = e.clientX - wsRect.left;
+            const y2 = e.clientY - wsRect.top;
+            
+            const startRect = dragStart.getBoundingClientRect();
+            const x1 = startRect.left + startRect.width/2 - wsRect.left;
+            const y1 = startRect.top + startRect.height/2 - wsRect.top;
+            
+            currentWire.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+        }
+        
+        function handleGlobalMouseUp(e) {
+            if (!isDragging) return;
+            
+            const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+            
+            if (elemBelow && elemBelow.classList.contains('terminal') && elemBelow !== dragStart) {
+                completeConnection(dragStart, elemBelow);
+                cancelDragging();
+            } else if (isDragging) {
+                setTimeout(() => {
+                    if (isDragging) {
+                        cancelDragging();
+                    }
+                }, 300);
+            }
+        }
+        
+        function getTerminalName(elem) {
+            return `${elem.dataset.device.toUpperCase()}-${elem.dataset.terminal}`;
+        }
+        
+        function createDraggingWire(x1, y1, x2, y2, color) {
+            const svg = document.getElementById('wire-layer');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('class', `wire ${color} dragging`);
+            path.setAttribute('id', 'dragging-wire');
+            path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+            svg.appendChild(path);
+            currentWire = path;
+        }
+        
+        function completeConnection(startElem, endElem) {
+            const startDevice = startElem.dataset.device;
+            const startTerm = startElem.dataset.terminal;
+            const endDevice = endElem.dataset.device;
+            const endTerm = endElem.dataset.terminal;
+            const color = startElem.dataset.color;
+            
+            const exists = connections.some(c => 
+                (c.from.device === startDevice && c.from.terminal === startTerm &&
+                 c.to.device === endDevice && c.to.terminal === endTerm) ||
+                (c.from.device === endDevice && c.from.terminal === endTerm &&
+                 c.to.device === startDevice && c.to.terminal === startTerm)
+            );
+            
+            if (exists) {
+                showHint('该连接已存在！');
+                return;
+            }
+            
+            const connection = {
+                id: Date.now(),
+                from: { device: startDevice, terminal: startTerm, element: startElem },
+                to: { device: endDevice, terminal: endTerm, element: endElem },
+                color: color
+            };
+            
+            connections.push(connection);
+            drawWire(connection);
+            
+            updateTerminalStatus();
+            updateChecklist();
+            calculateScore();
+            updatePowerStatus();
+            
+            showHint('连线完成！');
+        }
+        
+        function drawWire(connection) {
+            const svg = document.getElementById('wire-layer');
+            const workspace = document.getElementById('workspace');
+            const wsRect = workspace.getBoundingClientRect();
+            
+            const fromRect = connection.from.element.getBoundingClientRect();
+            const toRect = connection.to.element.getBoundingClientRect();
+            
+            const x1 = fromRect.left + fromRect.width/2 - wsRect.left;
+            const y1 = fromRect.top + fromRect.height/2 - wsRect.top;
+            const x2 = toRect.left + toRect.width/2 - wsRect.left;
+            const y2 = toRect.top + toRect.height/2 - wsRect.top;
+            
+            const midX = (x1 + x2) / 2;
+            const midY = Math.max(y1, y2) + 50;
+            
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('class', `wire ${connection.color}`);
+            path.setAttribute('d', `M ${x1} ${y1} Q ${midX} ${midY} ${x2} ${y2}`);
+            path.setAttribute('id', `wire-${connection.id}`);
+            path.setAttribute('data-id', connection.id);
+            
+            path.addEventListener('dblclick', () => removeConnection(connection.id));
+            
+            svg.appendChild(path);
+        }
+        
+        function redrawAllWires() {
+            const svg = document.getElementById('wire-layer');
+            const wires = svg.querySelectorAll('.wire:not(.dragging)');
+            wires.forEach(w => w.remove());
+            
+            connections.forEach(conn => {
+                drawWire(conn);
+            });
+        }
+        
+        function removeConnection(id) {
+            connections = connections.filter(c => c.id !== id);
+            const wire = document.getElementById(`wire-${id}`);
+            if (wire) wire.remove();
+            updateTerminalStatus();
+            updateChecklist();
+            calculateScore();
+            updatePowerStatus();
+            showHint('已删除连线');
+        }
+        
+        function cancelDragging() {
+            isDragging = false;
+            if (dragStart) {
+                dragStart.classList.remove('selected');
+                dragStart = null;
+            }
+            if (currentWire) {
+                currentWire.remove();
+                currentWire = null;
+            }
+            hideHint();
+        }
+        
+        function updateTerminalStatus() {
+            document.querySelectorAll('.terminal-status').forEach(s => {
+                s.className = 'terminal-status';
+                s.style.background = '#95a5a6';
+                s.style.boxShadow = 'none';
+            });
+            
+            connections.forEach(conn => {
+                const fromStatus = document.getElementById(`status-${conn.from.device}-${conn.from.terminal}`);
+                const toStatus = document.getElementById(`status-${conn.to.device}-${conn.to.terminal}`);
+                if (fromStatus) {
+                    fromStatus.style.background = '#3498db';
+                    fromStatus.style.boxShadow = '0 0 5px #3498db';
+                }
+                if (toStatus) {
+                    toStatus.style.background = '#3498db';
+                    toStatus.style.boxShadow = '0 0 5px #3498db';
+                }
+            });
+            
+            const result = calculateDetailedScore();
+            result.details.forEach(detail => {
+                if (detail.isConnected) {
+                    detail.terminals.forEach(t => {
+                        const el = document.getElementById(`status-${t.device}-${t.terminal}`);
+                        if (el) {
+                            el.className = 'terminal-status correct';
+                        }
+                    });
+                }
+            });
+        }
+        
+        function checkWireConnection(wireDef) {
+            if (!wireDef.required) return false;
+            
+            return wireDef.required.every(req => {
+                return connections.some(c => {
+                    const match1 = c.from.device === req.from.device && 
+                                  c.from.terminal === req.from.terminal &&
+                                  c.to.device === req.to.device && 
+                                  c.to.terminal === req.to.terminal;
+                    const match2 = c.from.device === req.to.device && 
+                                  c.from.terminal === req.to.terminal &&
+                                  c.to.device === req.from.device && 
+                                  c.to.terminal === req.from.terminal;
+                    return match1 || match2;
+                });
+            });
+        }
+        
+        function findWrongConnection(wireDef) {
+            let colorConns = connections.filter(c => c.color === wireDef.color);
+            
+            if (wireDef.id === 2) {
+                colorConns = colorConns.filter(c => {
+                    const isPowerNConnection = 
+                        (c.from.device === 'power' && c.from.terminal === 'n' && c.to.device === 'plc' && c.to.terminal === 'n') ||
+                        (c.from.device === 'plc' && c.from.terminal === 'n' && c.to.device === 'power' && c.to.terminal === 'n');
+                    return !isPowerNConnection;
+                });
+            }
+            
+            if (colorConns.length === 0) return false;
+            
+            const isCorrect = checkWireConnection(wireDef);
+            if (!isCorrect) return true;
+            
+            const requiredPairs = wireDef.required.map(r => [
+                `${r.from.device}-${r.from.terminal}`,
+                `${r.to.device}-${r.to.terminal}`
+            ]).flat();
+            
+            const hasExtra = colorConns.some(c => {
+                const pair1 = `${c.from.device}-${c.from.terminal}`;
+                const pair2 = `${c.to.device}-${c.to.terminal}`;
+                return !requiredPairs.includes(pair1) || !requiredPairs.includes(pair2);
+            });
+            
+            return hasExtra;
+        }
+        
+        function updateChecklist() {
+            // 检查清单已隐藏，但保留更新逻辑以维持代码完整性
+            standardWires.forEach((wire, index) => {
+                const connected = checkWireConnection(wire);
+                const wrong = findWrongConnection(wire);
+                const item = document.getElementById(`check-${index + 1}`);
+                const icon = item.querySelector('.wire-status-icon');
+                
+                item.classList.remove('correct', 'wrong', 'pending');
+                
+                if (connected && !wrong) {
+                    item.classList.add('correct');
+                    icon.textContent = '✓';
+                } else if (wrong) {
+                    item.classList.add('wrong');
+                    icon.textContent = '✗';
+                } else {
+                    item.classList.add('pending');
+                    icon.textContent = '';
+                }
+            });
+        }
+        
+        function calculateDetailedScore() {
+            let correctCount = 0;
+            let details = [];
+            
+            standardWires.forEach(wire => {
+                const connected = checkWireConnection(wire);
+                const wrong = findWrongConnection(wire);
+                
+                const terminals = [];
+                wire.required.forEach(r => {
+                    terminals.push(r.from, r.to);
+                });
+                
+                if (connected && !wrong) {
+                    correctCount++;
+                }
+                
+                details.push({
+                    wire: wire,
+                    isConnected: connected && !wrong,
+                    isWrong: wrong,
+                    terminals: terminals
+                });
+            });
+            
+            const errorCount = 5 - correctCount;
+            const score = Math.max(0, 100 - (errorCount * 20));
+            
+            return { score, correctCount, errorCount, details };
+        }
+        
+        function calculateScore() {
+            const result = calculateDetailedScore();
+            const scoreEl = document.getElementById('score');
+            scoreEl.textContent = result.score;
+            
+            scoreEl.className = 'score-value';
+            if (result.score === 100) scoreEl.classList.add('perfect');
+            else if (result.score >= 60) scoreEl.classList.add('pass');
+            else scoreEl.classList.add('fail');
+            
+            return result;
+        }
+        
+        function updatePowerStatus() {
+            const result = calculateDetailedScore();
+            
+            const powerOk = result.details[4].isConnected;
+            const powerLed = document.getElementById('power-led');
+            if (powerOk) {
+                powerLed.classList.add('on');
+            } else {
+                powerLed.classList.remove('on');
+            }
+            
+            const sensorOk = result.details[0].isConnected && 
+                           result.details[1].isConnected && 
+                           result.details[2].isConnected && 
+                           result.details[3].isConnected;
+            const sensorLed = document.getElementById('sensor-led');
+            if (sensorOk && powerOk) {
+                sensorLed.classList.add('active');
+            } else {
+                sensorLed.classList.remove('active');
+            }
+        }
+        
+        function checkWiring() {
+            const result = calculateDetailedScore();
+            const modal = document.getElementById('resultModal');
+            const scoreEl = document.getElementById('modal-score');
+            const feedbackEl = document.getElementById('modal-feedback');
+            const detailEl = document.getElementById('wires-detail');
+            
+            scoreEl.textContent = result.score + '分';
+            
+            if (result.score === 100) {
+                feedbackEl.innerHTML = '🎉 完美！五根线全部正确！<br>您已完全掌握PNP型传感器接线技术。';
+                scoreEl.style.color = '#27ae60';
+            } else if (result.score >= 60) {
+                feedbackEl.innerHTML = `⚠️ 接线基本正确，但有 ${result.errorCount} 处错误。<br>请对照原理图检查接线。`;
+                scoreEl.style.color = '#f39c12';
+            } else {
+                feedbackEl.innerHTML = '❌ 接线存在严重错误！<br>请认真学习PNP型传感器接线原理。';
+                scoreEl.style.color = '#e74c3c';
+            }
+            
+            let detailHTML = '<h3 style="margin-bottom: 15px; color: #333;">五根线检查详情：</h3>';
+            
+            result.details.forEach((detail, index) => {
+                const wire = detail.wire;
+                let statusClass, statusIcon, statusText;
+                
+                if (detail.isConnected) {
+                    statusClass = 'correct';
+                    statusIcon = '✅';
+                    statusText = '正确 (+20分)';
+                } else if (detail.isWrong) {
+                    statusClass = 'wrong';
+                    statusIcon = '❌';
+                    statusText = '错误 (0分)';
+                } else {
+                    statusClass = 'missing';
+                    statusIcon = '⭕';
+                    statusText = '未连接 (0分)';
+                }
+                
+                detailHTML += `
+                    <div class="detail-item ${statusClass}">
+                        <div>
+                            <div style="font-weight: bold; margin-bottom: 4px;">${index + 1}. ${wire.name}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">${wire.description}</div>
+                        </div>
+                        <div class="detail-score">${statusIcon} ${statusText}</div>
+                    </div>
+                `;
+            });
+            
+            detailEl.innerHTML = detailHTML;
+            modal.style.display = 'block';
+            
+            updateTerminalStatus();
+        }
+        
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+        
+        function resetWiring() {
+            connections = [];
+            const svg = document.getElementById('wire-layer');
+            const wires = svg.querySelectorAll('.wire:not(.dragging)');
+            wires.forEach(w => w.remove());
+            
+            document.querySelectorAll('.terminal-status').forEach(s => {
+                s.className = 'terminal-status';
+                s.style.background = '#95a5a6';
+                s.style.boxShadow = 'none';
+            });
+            
+            document.querySelectorAll('.wire-check-item').forEach((item, index) => {
+                item.className = 'wire-check-item pending';
+                item.querySelector('.wire-status-icon').textContent = '';
+            });
+            
+            document.getElementById('power-led').classList.remove('on');
+            document.getElementById('sensor-led').classList.remove('active');
+            
+            calculateScore();
+            showHint('已重置所有接线，请重新开始');
+        }
+        
+        function showCorrect() {
+            alert('标准PNP型传感器五线接法：\n\n' +
+                  '第1根（棕色）：传感器+24V → 电源+V\n' +
+                  '第2根（蓝色）：传感器0V → 电源-V\n' +
+                  '第3根（黑色）：传感器OUT → PLC-X0\n' +
+                  '第4根（S/S）：PLC公共端 → 电源-V（源型接法）\n' +
+                  '第5根（红/蓝）：电源L→PLC L，电源N→PLC N\n\n' +
+                  '操作方式：\n' +
+                  '1. 点击起点端子，再点击终点端子\n' +
+                  '2. 或按住起点端子拖动到终点端子释放');
+        }
+        
+        function showHint(text) {
+            const hint = document.getElementById('hint-box');
+            hint.textContent = text;
+            hint.classList.add('show');
+            setTimeout(() => hint.classList.remove('show'), 3000);
+        }
+        
+        function hideHint() {
+            document.getElementById('hint-box').classList.remove('show');
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('resultModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
